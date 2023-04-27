@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>tic toc toe 2</title>
+    <style>
+        /* font */
+        * {
+            font-family: 'Itim', cursive;
+        }
+
+        .background {
+            background-color: #050505;
+            height: 120vh;
+            padding-top: 1px;
+            width: 100%;
+        }
+
+        .display {
+            color: white;
+            font-size: 25px;
+            text-align: center;
+            margin-top: 1em;
+            margin-bottom: 1em;
+        }
+
+        body {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .board {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 50px;
+        }
+
+        .hide {
+            display: none;
+        }
+
+        .row {
+            display: flex;
+        }
+
+        .cell {
+            width: 60px;
+            height: 60px;
+            border: 1px solid black;
+            background-color: white;
+            margin: 5px;
+            cursor: pointer;
+        }
+
+        .cell:hover {
+            background-color: #eee;
+        }
+
+        .message {
+            margin-top: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            color: #3aa5ea;
+        }
+
+
+        /* đổi màu và căn chữ */
+        .playerX {
+            color: #09C372;
+        }
+
+        .playerO {
+            color: #498AFB;
+        }
+
+        #reset {
+            background-color: #FF3860;
+        }
+
+        /*thay đổi nút bấm*/
+        .controls button {
+            color: white;
+            padding: 8px;
+            border-radius: 8px;
+            border: none;
+            font-size: 20px;
+            margin-left: 1em;
+            cursor: pointer;
+        }
+
+        .title {
+            color: white;
+            text-align: center;
+            font-size: 40px;
+            margin-top: 10%;
+        }
+
+        .cell {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: 50px;
+        }
+
+        .buttons {
+            margin-top: 1em;
+        }
+
+        .controls button {
+            margin-left: 0;
+            margin-top: 1em;
+        }
+        .nhac {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #F59E0B;
+            color: white;
+            border-radius: 50%;
+            border: none;
+            padding: 12px 24px;
+            font-size: 18px;
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+        }
+    </style>
+</head>
+<body>
+<!--<marquee><h1><font face="" tozota color="red">link</font></h1></marquee>-->
+<main class="background">
+    <section class="title">
+        <h1>Cờ caro</h1>
+    </section>
+    <section class="display">
+        Lượt chơi <span class="display-player playerX">X</span>
+    </section>
+    <div class="nhac">
+    <button onclick="playMusic()">Play Music</button>
+    </div>
+    <!--    tạo lưới    -->
+    <div class="board">
+        <div class="row">
+            <div class="cell" id="cell00" onclick="setMove('00')"></div>
+            <div class="cell" id="cell01" onclick="setMove('01')"></div>
+            <div class="cell" id="cell02" onclick="setMove('02')"></div>
+        </div>
+        <div class="row">
+            <div class="cell" id="cell10" onclick="setMove('10')"></div>
+            <div class="cell" id="cell11" onclick="setMove('11')"></div>
+            <div class="cell" id="cell12" onclick="setMove('12')"></div>
+        </div>
+        <div class="row">
+            <div class="cell" id="cell20" onclick="setMove('20')"></div>
+            <div class="cell" id="cell21" onclick="setMove('21')"></div>
+            <div class="cell" id="cell22" onclick="setMove('22')"></div>
+        </div>
+    </div>
+    <div style="color: white" ; align="center" ; id="message"></div>
+    <div class="controls">
+        <div class="controls">
+            <button id="reset" onclick="resetGame()">Reset</button>
+        </div>
+    </div>
+</main>
+</body>
+</html>
+<script>
+    // gọi biến
+    const playerX = 'X';
+    const playerO = 'O';
+    let currentPlayer = playerX;
+    let moves = 0;
+    let game = [[null, null, null], [null, null, null], [null, null, null]];
+//
+    function setMove(id) {
+        if (document.getElementById('cell' + id).innerHTML === '') {
+            document.getElementById('cell' + id).innerHTML = currentPlayer;
+            // đổi màu người chơi X và O
+            document.getElementById('cell' + id).classList = (currentPlayer === playerX ? 'cell playerX' : 'cell playerO');
+            game[id[0]][id[1]] = currentPlayer;
+            moves++;
+// thông báo người thắng
+            if (checkWin()) {
+                showMessage(currentPlayer + ' Thắng!');
+                resetGame();
+            } else if (moves === 9) {
+                showMessage("Trò chơi kết thúc . Hòa!");
+                resetGame();
+            } else {
+                // kiểm tra nđi
+                currentPlayer = currentPlayer === playerX ? playerO : playerX;
+                const displayPlayer = document.querySelector('.display-player');
+                displayPlayer.innerHTML = currentPlayer;
+                displayPlayer.classList.remove(currentPlayer === playerX ? 'playerO' : 'playerX');
+                displayPlayer.classList.add(currentPlayer === playerX ? 'playerX' : 'playerO');
+            }
+        }
+    }
+
+    // kiểm tra một người chơi đã thắng trò chơi Tic Tac Toe hay chưa.
+    function checkWin() {
+        if ((game[0][0] !== null && game[0][0] === game[0][1] && game[0][1] === game[0][2]) ||
+            (game[1][0] !== null && game[1][0] === game[1][1] && game[1][1] === game[1][2]) ||
+            (game[2][0] !== null && game[2][0] === game[2][1] && game[2][1] === game[2][2]) ||
+            (game[0][0] !== null && game[0][0] === game[1][0] && game[1][0] === game[2][0]) ||
+            (game[0][1] !== null && game[0][1] === game[1][1] && game[1][1] === game[2][1]) ||
+            (game[0][2] !== null && game[0][2] === game[1][2] && game[1][2] === game[2][2]) ||
+            (game[0][0] !== null && game[0][0] === game[1][1] && game[1][1] === game[2][2]) ||
+            (game[0][2] !== null && game[0][2] === game[1][1] && game[1][1] === game[2][0])) {
+            return true;
+        }
+
+        return false;
+    }
+
+    function showMessage(message) {
+        const messageElement = document.getElementById('message');
+        messageElement.innerHTML = message;
+
+        if (message.includes('wins')) {
+            messageElement.classList.add('win');
+        } else {
+            messageElement.classList.remove('win');
+        }
+    }
+
+    // sự kiện reset trò chơi
+    function resetGame() {
+        game = [[null, null, null], [null, null, null], [null, null, null]];
+        currentPlayer = playerX;
+        moves = 0;
+
+        for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < 3; j++) {
+                document.getElementById('cell' + i + j).innerHTML = '';
+            }
+        }
+
+    }
+
+
+    let audio = new Audio();
+    audio.src = "cover.mp3";
+
+    function playMusic() {
+     audio.play();
+    }
+
+</script>
